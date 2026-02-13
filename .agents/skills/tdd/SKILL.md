@@ -1,107 +1,123 @@
 ---
 name: tdd
-description: Test-driven development with red-green-refactor loop. Use when user wants to build features or fix bugs using TDD, mentions "red-green-refactor", wants integration tests, or asks for test-first development.
+description: Test-Driven Development methodology and red-green-refactor workflow (formerly test-tdd). This skill should be used when practicing TDD, writing tests first, designing tests before implementation, or reviewing test-first approaches. Triggers on "write tests first", "test before code", "red green refactor", "test driven development". This skill does NOT cover Vitest framework specifics (use vitest skill) or API mocking with MSW (use msw skill).
 ---
 
-# Test-Driven Development
+# Community Test-Driven Development Best Practices
 
-## Philosophy
+Comprehensive guide to Test-Driven Development practices, designed for AI agents and LLMs. Contains 42 rules across 8 categories, prioritized by impact to guide test writing, refactoring, and code generation.
 
-**Core principle**: Tests should verify behavior through public interfaces, not implementation details. Code can change entirely; tests shouldn't.
+## When to Apply
 
-**Good tests** are integration-style: they exercise real code paths through public APIs. They describe _what_ the system does, not _how_ it does it. A good test reads like a specification - "user can checkout with valid cart" tells you exactly what capability exists. These tests survive refactors because they don't care about internal structure.
+Reference these guidelines when:
+- Writing new tests using TDD workflow
+- Implementing the red-green-refactor cycle
+- Designing test structure and organization
+- Creating test data and fixtures
+- Reviewing or refactoring existing test suites
 
-**Bad tests** are coupled to implementation. They mock internal collaborators, test private methods, or verify through external means (like querying a database directly instead of using the interface). The warning sign: your test breaks when you refactor, but behavior hasn't changed. If you rename an internal function and tests fail, those tests were testing implementation, not behavior.
+## TDD Workflow
 
-See [tests.md](tests.md) for examples and [mocking.md](mocking.md) for mocking guidelines.
+1. **RED**: Write a failing test that defines desired behavior
+2. **GREEN**: Write minimal code to make the test pass
+3. **REFACTOR**: Clean up code while keeping tests green
+4. Repeat for each new behavior
 
-## Anti-Pattern: Horizontal Slices
+## Rule Categories by Priority
 
-**DO NOT write all tests first, then all implementation.** This is "horizontal slicing" - treating RED as "write all tests" and GREEN as "write all code."
+| Priority | Category | Impact | Prefix |
+|----------|----------|--------|--------|
+| 1 | Red-Green-Refactor Cycle | CRITICAL | `cycle-` |
+| 2 | Test Design Principles | CRITICAL | `design-` |
+| 3 | Test Isolation & Dependencies | HIGH | `isolate-` |
+| 4 | Test Data Management | HIGH | `data-` |
+| 5 | Assertions & Verification | MEDIUM | `assert-` |
+| 6 | Test Organization & Structure | MEDIUM | `org-` |
+| 7 | Test Performance & Reliability | MEDIUM | `perf-` |
+| 8 | Test Pyramid & Strategy | LOW | `strat-` |
 
-This produces **crap tests**:
+## Quick Reference
 
-- Tests written in bulk test _imagined_ behavior, not _actual_ behavior
-- You end up testing the _shape_ of things (data structures, function signatures) rather than user-facing behavior
-- Tests become insensitive to real changes - they pass when behavior breaks, fail when behavior is fine
-- You outrun your headlights, committing to test structure before understanding the implementation
+### 1. Red-Green-Refactor Cycle (CRITICAL)
 
-**Correct approach**: Vertical slices via tracer bullets. One test → one implementation → repeat. Each test responds to what you learned from the previous cycle. Because you just wrote the code, you know exactly what behavior matters and how to verify it.
+- `cycle-write-test-first` - Write the Test Before the Implementation
+- `cycle-minimal-code-to-pass` - Write Only Enough Code to Pass the Test
+- `cycle-refactor-after-green` - Refactor Immediately After Green
+- `cycle-verify-test-fails-first` - Verify the Test Fails Before Writing Code
+- `cycle-small-increments` - Take Small Incremental Steps
+- `cycle-maintain-test-list` - Maintain a Test List
 
-```
-WRONG (horizontal):
-  RED:   test1, test2, test3, test4, test5
-  GREEN: impl1, impl2, impl3, impl4, impl5
+### 2. Test Design Principles (CRITICAL)
 
-RIGHT (vertical):
-  RED→GREEN: test1→impl1
-  RED→GREEN: test2→impl2
-  RED→GREEN: test3→impl3
-  ...
-```
+- `design-test-behavior-not-implementation` - Test Behavior Not Implementation
+- `design-one-assertion-per-test` - One Logical Assertion Per Test
+- `design-descriptive-test-names` - Use Descriptive Test Names
+- `design-aaa-pattern` - Follow the Arrange-Act-Assert Pattern
+- `design-test-edge-cases` - Test Edge Cases and Boundaries
+- `design-avoid-logic-in-tests` - Avoid Logic in Tests
 
-## Workflow
+### 3. Test Isolation & Dependencies (HIGH)
 
-### 1. Planning
+- `isolate-mock-external-dependencies` - Mock External Dependencies
+- `isolate-no-shared-state` - Avoid Shared Mutable State Between Tests
+- `isolate-deterministic-tests` - Write Deterministic Tests
+- `isolate-prefer-stubs-over-mocks` - Prefer Stubs Over Mocks for Queries
+- `isolate-use-dependency-injection` - Use Dependency Injection for Testability
 
-Before writing any code:
+### 4. Test Data Management (HIGH)
 
-- [ ] Confirm with user what interface changes are needed
-- [ ] Confirm with user which behaviors to test (prioritize)
-- [ ] Identify opportunities for [deep modules](deep-modules.md) (small interface, deep implementation)
-- [ ] Design interfaces for [testability](interface-design.md)
-- [ ] List the behaviors to test (not implementation steps)
-- [ ] Get user approval on the plan
+- `data-use-factories` - Use Factories for Test Data Creation
+- `data-minimal-setup` - Keep Test Setup Minimal
+- `data-avoid-mystery-guests` - Avoid Mystery Guests
+- `data-unique-identifiers` - Use Unique Identifiers Per Test
+- `data-builder-pattern` - Use Builder Pattern for Complex Objects
 
-Ask: "What should the public interface look like? Which behaviors are most important to test?"
+### 5. Assertions & Verification (MEDIUM)
 
-**You can't test everything.** Confirm with the user exactly which behaviors matter most. Focus testing effort on critical paths and complex logic, not every possible edge case.
+- `assert-specific-assertions` - Use Specific Assertions
+- `assert-error-messages` - Assert on Error Messages and Types
+- `assert-no-assertions-antipattern` - Every Test Must Have Assertions
+- `assert-custom-matchers` - Create Custom Matchers for Domain Assertions
+- `assert-snapshot-testing` - Use Snapshot Testing Judiciously
 
-### 2. Tracer Bullet
+### 6. Test Organization & Structure (MEDIUM)
 
-Write ONE test that confirms ONE thing about the system:
+- `org-group-by-behavior` - Group Tests by Behavior Not Method
+- `org-file-structure` - Follow Consistent Test File Structure
+- `org-setup-teardown` - Use Setup and Teardown Hooks Appropriately
+- `org-test-utilities` - Extract Reusable Test Utilities
+- `org-parameterized-tests` - Use Parameterized Tests for Variations
 
-```
-RED:   Write test for first behavior → test fails
-GREEN: Write minimal code to pass → test passes
-```
+### 7. Test Performance & Reliability (MEDIUM)
 
-This is your tracer bullet - proves the path works end-to-end.
+- `perf-fast-unit-tests` - Keep Unit Tests Under 100ms
+- `perf-avoid-network-calls` - Eliminate Network Calls in Unit Tests
+- `perf-fix-flaky-tests` - Fix Flaky Tests Immediately
+- `perf-parallelize-tests` - Parallelize Independent Tests
+- `perf-avoid-sleep` - Avoid Arbitrary Sleep Calls
 
-### 3. Incremental Loop
+### 8. Test Pyramid & Strategy (LOW)
 
-For each remaining behavior:
+- `strat-test-pyramid` - Follow the Test Pyramid
+- `strat-mutation-testing` - Use Mutation Testing to Validate Test Quality
+- `strat-coverage-targets` - Set Meaningful Coverage Targets
+- `strat-integration-boundaries` - Test Integration at Service Boundaries
+- `strat-e2e-critical-paths` - Limit E2E Tests to Critical User Paths
 
-```
-RED:   Write next test → fails
-GREEN: Minimal code to pass → passes
-```
+## How to Use
 
-Rules:
+Read individual reference files for detailed explanations and code examples:
 
-- One test at a time
-- Only enough code to pass current test
-- Don't anticipate future tests
-- Keep tests focused on observable behavior
+- [Section definitions](references/_sections.md) - Category structure and impact levels
+- [Rule template](assets/templates/_template.md) - Template for adding new rules
+- [cycle-write-test-first](references/cycle-write-test-first.md) - Write the Test Before the Implementation
+- [design-aaa-pattern](references/design-aaa-pattern.md) - Follow the Arrange-Act-Assert Pattern
 
-### 4. Refactor
+## Related Skills
 
-After all tests pass, look for [refactor candidates](refactoring.md):
+- For Vitest framework specifics, see `vitest` skill
+- For API mocking with MSW, see `msw` skill
 
-- [ ] Extract duplication
-- [ ] Deepen modules (move complexity behind simple interfaces)
-- [ ] Apply SOLID principles where natural
-- [ ] Consider what new code reveals about existing code
-- [ ] Run tests after each refactor step
+## Full Compiled Document
 
-**Never refactor while RED.** Get to GREEN first.
-
-## Checklist Per Cycle
-
-```
-[ ] Test describes behavior, not implementation
-[ ] Test uses public interface only
-[ ] Test would survive internal refactor
-[ ] Code is minimal for this test
-[ ] No speculative features added
-```
+For the complete guide with all rules expanded: `AGENTS.md`
