@@ -1,0 +1,80 @@
+---
+title: "Tailwind CSS v4: What You Need to Know"
+description: "An overview of the key changes and new features in Tailwind CSS v4."
+date: "2025-05-15"
+author: "Blog Author"
+---
+
+Tailwind CSS v4 is a major rewrite that brings significant performance improvements and a modernized configuration approach. If you're upgrading from v3, here's what to expect.
+
+## CSS-First Configuration
+
+The biggest change is moving configuration from `tailwind.config.js` to CSS using the `@theme` directive:
+
+```css
+@import "tailwindcss";
+
+@theme {
+  --color-primary: oklch(0.205 0 0);
+  --color-secondary: oklch(0.97 0 0);
+  --font-sans: "Inter", sans-serif;
+}
+```
+
+This eliminates the JavaScript configuration file in most cases and lets you use CSS custom properties directly.
+
+## Performance
+
+Tailwind v4 features:
+
+- **Oxide engine** — a new high-performance engine written in Rust
+- **Faster builds** — up to 10x faster full builds and 100x faster incremental builds
+- **Smaller output** — more efficient CSS generation
+
+## New Features
+
+### Container Queries
+
+Container queries are now built in:
+
+```html
+<div class="@container">
+  <div class="@lg:grid-cols-2">
+    Responds to container width, not viewport
+  </div>
+</div>
+```
+
+### 3D Transforms
+
+New utilities for 3D transforms:
+
+```html
+<div class="rotate-x-12 rotate-y-6 perspective-800">
+  3D transformed element
+</div>
+```
+
+### `not-*` Variant
+
+A new `not-*` variant for negation:
+
+```html
+<div class="not-last:mb-4">
+  Margin on all items except the last
+</div>
+```
+
+## Migration from v3
+
+Use the official upgrade tool:
+
+```bash
+npx @tailwindcss/upgrade
+```
+
+This handles most of the migration automatically, including converting your config to the new CSS-based format.
+
+## Summary
+
+Tailwind v4 is faster, simpler to configure, and more powerful. The move to CSS-first configuration is a welcome change that reduces tooling complexity and aligns with modern CSS capabilities.

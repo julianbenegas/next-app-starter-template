@@ -1,0 +1,62 @@
+---
+title: "Building a Blog with MDX"
+description: "How this blog was built using Next.js, MDX, and Tailwind CSS."
+date: "2025-05-10"
+author: "Blog Author"
+---
+
+MDX lets you write JSX directly in your markdown files. This means you can use React components alongside standard markdown syntax — a great fit for developer blogs that need code examples and interactive elements.
+
+## Why MDX?
+
+Markdown is simple and portable, but it has limitations. MDX extends markdown with:
+
+- **Component embedding** — use any React component inline
+- **Frontmatter** — structured metadata for each post (title, date, description)
+- **Plugin ecosystem** — remark and rehype plugins for syntax highlighting, GFM tables, math, and more
+
+## The Architecture
+
+This blog uses `next-mdx-remote/rsc` to compile MDX on the server. The content lives in a `content/` directory as `.mdx` files, and a dynamic route at `/blog/[slug]` renders each post.
+
+```
+content/
+  getting-started-with-nextjs.mdx
+  building-a-blog-with-mdx.mdx
+app/
+  blog/
+    page.tsx          # Blog listing
+    [slug]/
+      page.tsx        # Individual post
+lib/
+  blog.ts             # Utilities for reading posts
+```
+
+## Syntax Highlighting
+
+Code blocks are highlighted at build time using `rehype-pretty-code` powered by Shiki. This means zero client-side JavaScript for highlighting:
+
+```typescript
+function greet(name: string): string {
+  return `Hello, ${name}!`;
+}
+```
+
+## Frontmatter
+
+Each post starts with YAML frontmatter that provides metadata:
+
+```yaml
+---
+title: "My Post Title"
+description: "A short description."
+date: "2025-05-10"
+author: "Author Name"
+---
+```
+
+This metadata drives the blog listing page and SEO tags.
+
+## Summary
+
+MDX gives you the best of both worlds: the simplicity of markdown with the power of React. Combined with Next.js Server Components, it creates a fast, SEO-friendly blog with minimal client-side JavaScript.

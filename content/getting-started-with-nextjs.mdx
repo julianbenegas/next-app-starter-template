@@ -1,0 +1,45 @@
+---
+title: "Getting Started with Next.js 16"
+description: "A quick look at what's new in Next.js 16 and how to get up and running."
+date: "2025-05-01"
+author: "Blog Author"
+---
+
+Next.js 16 brings significant improvements to the developer experience, including Cache Components, the `use cache` directive, and continued investment in the App Router.
+
+## What's New
+
+The headline features include:
+
+- **Cache Components** — explicit opt-in caching model replacing the implicit fetch cache
+- **React 19 support** — concurrent rendering, Server Components by default
+- **Turbopack improvements** — faster dev server and persistent caching
+
+## Quick Start
+
+Create a new project with the latest version:
+
+```bash
+npx create-next-app@latest my-app
+cd my-app
+npm run dev
+```
+
+Then open [http://localhost:3000](http://localhost:3000) to see your app.
+
+## App Router Basics
+
+The App Router uses file-system routing under `app/`. Every `page.tsx` file becomes a route:
+
+```tsx
+// app/about/page.tsx
+export default function AboutPage() {
+  return <h1>About</h1>;
+}
+```
+
+Server Components are the default, meaning your components render on the server without sending JavaScript to the client unless you explicitly opt in with `"use client"`.
+
+## What's Next
+
+In the following posts, we'll explore MDX integration, styling with Tailwind CSS, and deploying to production. Stay tuned.
