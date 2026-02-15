@@ -1,11 +1,11 @@
-export const metadata = {
-  title: "Rendering Strategies for MDX Blogs",
-  description: "How to think about SSG, ISR, and SSR with MDX content.",
-  date: "2026-02-11",
-  tags: ["ssg", "isr", "ssr"],
-};
+---
+title: "Rendering Strategies for Markdown Blogs"
+description: "How to think about SSG, ISR, and SSR with Markdown content."
+date: "2026-02-11"
+tags: ["ssg", "isr", "ssr"]
+---
 
-# Rendering Strategies for MDX Blogs
+# Rendering Strategies for Markdown Blogs
 
 When building a developer blog, choose a rendering strategy based on how often content changes.
 

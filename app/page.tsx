@@ -14,7 +14,7 @@ export default function Home() {
             href="/blog"
             className="inline-block rounded-md border px-3 py-2 text-sm font-medium hover:bg-zinc-100"
           >
-            Visit the MDX blog
+            Visit the Markdown blog
           </Link>
         </CardContent>
       </Card>

@@ -4,7 +4,7 @@ import { getBlogPosts } from "@/lib/blog";
 
 export const metadata: Metadata = {
   title: "Blog",
-  description: "Developer notes and experiments written in MDX.",
+  description: "Developer notes and experiments written in Markdown.",
 };
 
 export default async function BlogIndexPage() {
@@ -14,7 +14,7 @@ export default async function BlogIndexPage() {
     <main className="py-12">
       <h1 className="text-4xl font-semibold tracking-tight mb-3">Blog</h1>
       <p className="text-zinc-700 mb-10">
-        A small MDX blog section built with Next.js 16 and App Router.
+        A small Markdown blog section built with Next.js 16 and Streamdown.
       </p>
 
       <div className="space-y-5">

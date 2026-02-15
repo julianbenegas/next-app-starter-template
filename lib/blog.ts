@@ -1,33 +1,33 @@
-import type { BlogPostMetadata, BlogPostModule } from "@/types/blog";
+import { readdir, readFile } from "node:fs/promises";
+import path from "node:path";
+import matter from "gray-matter";
+import type { BlogPost, BlogPostMetadata } from "@/types/blog";
 
-export type BlogPost = {
-  slug: string;
-  metadata: BlogPostMetadata;
-};
-
-const postModules = {
-  "hello-next16": () => import("@/content/blog/hello-next16.mdx"),
-  "rendering-strategies": () =>
-    import("@/content/blog/rendering-strategies.mdx"),
-} satisfies Record<string, () => Promise<BlogPostModule>>;
-
-export type BlogSlug = keyof typeof postModules;
+const postsDirectory = path.join(process.cwd(), "content/blog");
 
 export async function getBlogPosts(): Promise<BlogPost[]> {
-  const posts = await Promise.all(
-    (Object.keys(postModules) as BlogSlug[]).map(async (slug) => {
-      const mod = await postModules[slug]();
+  const entries = await readdir(postsDirectory, { withFileTypes: true });
 
-      return {
-        slug,
-        metadata: mod.metadata,
-      };
-    }),
+  const posts = await Promise.all(
+    entries
+      .filter((entry) => entry.isFile() && entry.name.endsWith(".md"))
+      .map(async (entry) => {
+        const slug = entry.name.replace(/\.md$/, "");
+        return getBlogPost(slug);
+      }),
   );
 
   return posts.sort((a, b) => b.metadata.date.localeCompare(a.metadata.date));
 }
 
-export async function getBlogPostModule(slug: BlogSlug) {
-  return postModules[slug]();
+export async function getBlogPost(slug: string): Promise<BlogPost> {
+  const filePath = path.join(postsDirectory, `${slug}.md`);
+  const fileContents = await readFile(filePath, "utf8");
+  const { data, content } = matter(fileContents);
+
+  return {
+    slug,
+    metadata: data as BlogPostMetadata,
+    content,
+  };
 }

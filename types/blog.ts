@@ -1,5 +1,3 @@
-import type { ComponentType } from "react";
-
 export type BlogPostMetadata = {
   title: string;
   description: string;
@@ -7,7 +5,8 @@ export type BlogPostMetadata = {
   tags: string[];
 };
 
-export type BlogPostModule = {
-  default: ComponentType;
+export type BlogPost = {
+  slug: string;
   metadata: BlogPostMetadata;
+  content: string;
 };
