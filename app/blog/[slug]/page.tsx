@@ -1,20 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { ComponentType } from "react";
-import {
-  type BlogPostMetadata,
-  type BlogSlug,
-  getBlogPostModule,
-  getBlogPosts,
-} from "@/lib/blog";
-
-type BlogPostModule = {
-  default: ComponentType;
-  metadata: BlogPostMetadata;
-};
+import { type BlogSlug, getBlogPostModule, getBlogPosts } from "@/lib/blog";
+import type { BlogPostModule } from "@/types/blog";
 
 type Props = {
+  // Next.js 16 App Router provides params as a Promise in generated route types.
   params: Promise<{ slug: string }>;
 };
 
@@ -28,7 +19,8 @@ export const dynamicParams = false;
 async function resolvePost(slug: string): Promise<BlogPostModule | null> {
   try {
     return (await getBlogPostModule(slug as BlogSlug)) as BlogPostModule;
-  } catch {
+  } catch (error) {
+    console.error(`[Blog] Failed to resolve post for slug "${slug}":`, error);
     return null;
   }
 }

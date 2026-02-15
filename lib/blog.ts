@@ -1,9 +1,4 @@
-export type BlogPostMetadata = {
-  title: string;
-  description: string;
-  date: string;
-  tags: string[];
-};
+import type { BlogPostMetadata, BlogPostModule } from "@/types/blog";
 
 export type BlogPost = {
   slug: string;
@@ -14,7 +9,7 @@ const postModules = {
   "hello-next16": () => import("@/content/blog/hello-next16.mdx"),
   "rendering-strategies": () =>
     import("@/content/blog/rendering-strategies.mdx"),
-} as const;
+} satisfies Record<string, () => Promise<BlogPostModule>>;
 
 export type BlogSlug = keyof typeof postModules;
 
@@ -25,7 +20,7 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
 
       return {
         slug,
-        metadata: mod.metadata as BlogPostMetadata,
+        metadata: mod.metadata,
       };
     }),
   );
