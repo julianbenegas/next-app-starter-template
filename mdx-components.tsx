@@ -22,15 +22,22 @@ const components: MDXComponents = {
   ol: ({ children }: ComponentProps<"ol">) => (
     <ol className="list-decimal pl-6 space-y-1 mb-4">{children}</ol>
   ),
-  code: ({ children }: ComponentProps<"code">) => (
-    <code className="rounded bg-zinc-100 px-1.5 py-0.5 text-sm">
-      {children}
-    </code>
-  ),
-  pre: ({ children }: ComponentProps<"pre">) => (
-    <pre className="overflow-x-auto rounded-lg bg-zinc-950 text-zinc-100 p-4 mb-6 text-sm">
-      {children}
-    </pre>
+  code: ({ className, children }: ComponentProps<"code">) => {
+    if (className?.includes("language-")) {
+      return <code className={className}>{children}</code>;
+    }
+
+    return (
+      <code className="rounded bg-zinc-100 px-1.5 py-0.5 text-sm">
+        {children}
+      </code>
+    );
+  },
+  pre: ({ className, ...props }: ComponentProps<"pre">) => (
+    <pre
+      className={`overflow-x-auto rounded-lg mb-6 text-sm ${className ?? ""}`.trim()}
+      {...props}
+    />
   ),
   a: ({ href, children }: ComponentProps<"a">) => {
     if (!href) return <>{children}</>;
