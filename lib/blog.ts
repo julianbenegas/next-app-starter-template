@@ -15,10 +15,15 @@ export type BlogPost = {
 
 export type BlogSlug = string;
 
+type BlogFileInfo = {
+  slug: string;
+  filename: string;
+};
+
 /**
  * Dynamically discover all MDX files in the content/blog directory
  */
-function getBlogSlugs(): string[] {
+function getBlogFiles(): BlogFileInfo[] {
   const blogDir = path.join(process.cwd(), "content", "blog");
 
   if (!fs.existsSync(blogDir)) {
@@ -29,18 +34,34 @@ function getBlogSlugs(): string[] {
 
   return files
     .filter((file) => file.endsWith(".mdx") || file.endsWith(".md"))
-    .map((file) => file.replace(/\.mdx?$/, ""));
+    .map((file) => ({
+      slug: file.replace(/\.mdx?$/, ""),
+      filename: file,
+    }));
+}
+
+/**
+ * Validate that a slug is safe and exists in the blog directory
+ */
+function isValidSlug(slug: string, validFiles: BlogFileInfo[]): boolean {
+  // Check for path traversal attempts
+  if (slug.includes("..") || slug.includes("/") || slug.includes("\\")) {
+    return false;
+  }
+
+  // Check that slug exists in our list of files
+  return validFiles.some((file) => file.slug === slug);
 }
 
 export async function getBlogPosts(): Promise<BlogPost[]> {
-  const slugs = getBlogSlugs();
+  const blogFiles = getBlogFiles();
 
   const posts = await Promise.all(
-    slugs.map(async (slug) => {
-      const mod = await import(`@/content/blog/${slug}.mdx`);
+    blogFiles.map(async (file) => {
+      const mod = await import(`@/content/blog/${file.filename}`);
 
       return {
-        slug,
+        slug: file.slug,
         metadata: mod.metadata as BlogPostMetadata,
       };
     }),
@@ -50,5 +71,16 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
 }
 
 export async function getBlogPostModule(slug: BlogSlug) {
-  return import(`@/content/blog/${slug}.mdx`);
+  const blogFiles = getBlogFiles();
+
+  if (!isValidSlug(slug, blogFiles)) {
+    throw new Error(`Invalid or unknown blog slug: ${slug}`);
+  }
+
+  const file = blogFiles.find((f) => f.slug === slug);
+  if (!file) {
+    throw new Error(`Blog post not found: ${slug}`);
+  }
+
+  return import(`@/content/blog/${file.filename}`);
 }
