@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import path from "node:path";
+
 export type BlogPostMetadata = {
   title: string;
   description: string;
@@ -10,18 +13,31 @@ export type BlogPost = {
   metadata: BlogPostMetadata;
 };
 
-const postModules = {
-  "hello-next16": () => import("@/content/blog/hello-next16.mdx"),
-  "rendering-strategies": () =>
-    import("@/content/blog/rendering-strategies.mdx"),
-} as const;
+export type BlogSlug = string;
 
-export type BlogSlug = keyof typeof postModules;
+/**
+ * Dynamically discover all MDX files in the content/blog directory
+ */
+function getBlogSlugs(): string[] {
+  const blogDir = path.join(process.cwd(), "content", "blog");
+
+  if (!fs.existsSync(blogDir)) {
+    return [];
+  }
+
+  const files = fs.readdirSync(blogDir);
+
+  return files
+    .filter((file) => file.endsWith(".mdx") || file.endsWith(".md"))
+    .map((file) => file.replace(/\.mdx?$/, ""));
+}
 
 export async function getBlogPosts(): Promise<BlogPost[]> {
+  const slugs = getBlogSlugs();
+
   const posts = await Promise.all(
-    (Object.keys(postModules) as BlogSlug[]).map(async (slug) => {
-      const mod = await postModules[slug]();
+    slugs.map(async (slug) => {
+      const mod = await import(`@/content/blog/${slug}.mdx`);
 
       return {
         slug,
@@ -34,5 +50,5 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
 }
 
 export async function getBlogPostModule(slug: BlogSlug) {
-  return postModules[slug]();
+  return import(`@/content/blog/${slug}.mdx`);
 }
