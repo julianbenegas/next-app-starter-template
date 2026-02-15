@@ -20,24 +20,34 @@ type BlogFileInfo = {
   filename: string;
 };
 
+let cachedBlogFiles: BlogFileInfo[] | null = null;
+
 /**
  * Dynamically discover all MDX files in the content/blog directory
+ * Results are cached after first call
  */
 function getBlogFiles(): BlogFileInfo[] {
+  if (cachedBlogFiles) {
+    return cachedBlogFiles;
+  }
+
   const blogDir = path.join(process.cwd(), "content", "blog");
 
   if (!fs.existsSync(blogDir)) {
-    return [];
+    cachedBlogFiles = [];
+    return cachedBlogFiles;
   }
 
   const files = fs.readdirSync(blogDir);
 
-  return files
+  cachedBlogFiles = files
     .filter((file) => file.endsWith(".mdx") || file.endsWith(".md"))
     .map((file) => ({
       slug: file.replace(/\.mdx?$/, ""),
       filename: file,
     }));
+
+  return cachedBlogFiles;
 }
 
 export async function getBlogPosts(): Promise<BlogPost[]> {
@@ -60,12 +70,18 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
 export async function getBlogPostModule(slug: BlogSlug) {
   const blogFiles = getBlogFiles();
 
-  // Check for path traversal attempts
-  if (slug.includes("..") || slug.includes("/") || slug.includes("\\")) {
+  // Normalize and validate the slug to prevent path traversal
+  const normalizedSlug = path.normalize(slug);
+  if (
+    normalizedSlug !== slug ||
+    normalizedSlug.includes("..") ||
+    normalizedSlug.includes("/") ||
+    normalizedSlug.includes("\\")
+  ) {
     throw new Error(`Invalid blog slug: ${slug}`);
   }
 
-  const file = blogFiles.find((f) => f.slug === slug);
+  const file = blogFiles.find((f) => f.slug === normalizedSlug);
 
   if (!file) {
     throw new Error(`Blog post not found: ${slug}`);
