@@ -40,19 +40,6 @@ function getBlogFiles(): BlogFileInfo[] {
     }));
 }
 
-/**
- * Validate that a slug is safe and exists in the blog directory
- */
-function isValidSlug(slug: string, validFiles: BlogFileInfo[]): boolean {
-  // Check for path traversal attempts
-  if (slug.includes("..") || slug.includes("/") || slug.includes("\\")) {
-    return false;
-  }
-
-  // Check that slug exists in our list of files
-  return validFiles.some((file) => file.slug === slug);
-}
-
 export async function getBlogPosts(): Promise<BlogPost[]> {
   const blogFiles = getBlogFiles();
 
@@ -73,11 +60,13 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
 export async function getBlogPostModule(slug: BlogSlug) {
   const blogFiles = getBlogFiles();
 
-  if (!isValidSlug(slug, blogFiles)) {
-    throw new Error(`Invalid or unknown blog slug: ${slug}`);
+  // Check for path traversal attempts
+  if (slug.includes("..") || slug.includes("/") || slug.includes("\\")) {
+    throw new Error(`Invalid blog slug: ${slug}`);
   }
 
   const file = blogFiles.find((f) => f.slug === slug);
+
   if (!file) {
     throw new Error(`Blog post not found: ${slug}`);
   }
