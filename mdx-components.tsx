@@ -33,8 +33,11 @@ const components: MDXComponents = {
       </code>
     );
   },
-  pre: ({ children }: ComponentProps<"pre">) => (
-    <pre className="overflow-x-auto rounded-lg mb-6 text-sm">{children}</pre>
+  pre: ({ className, ...props }: ComponentProps<"pre">) => (
+    <pre
+      className={`overflow-x-auto rounded-lg mb-6 text-sm ${className ?? ""}`.trim()}
+      {...props}
+    />
   ),
   a: ({ href, children }: ComponentProps<"a">) => {
     if (!href) return <>{children}</>;
