@@ -35,7 +35,8 @@ const components: MDXComponents = {
   a: ({ href, children }: ComponentProps<"a">) => {
     if (!href) return <>{children}</>;
 
-    if (href.startsWith("/")) {
+    // Internal links: starting with / or # (same-page anchors)
+    if (href.startsWith("/") || href.startsWith("#")) {
       return (
         <Link
           href={href}
@@ -46,6 +47,7 @@ const components: MDXComponents = {
       );
     }
 
+    // External links: open in new tab
     return (
       <a
         href={href}
