@@ -1,17 +1,59 @@
 {
   "version": 1,
   "skills": {
+    "12-factor-app": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.experimental/12-factor-app/SKILL.md",
+      "computedHash": "007666c45eff227ee26b097f621632ebd61bfeef5324f5fb64b8a3ea70d44f69"
+    },
     "ai-sdk": {
       "source": "vercel/ai",
       "sourceType": "github",
       "skillPath": "skills/use-ai-sdk/SKILL.md",
       "computedHash": "2249889eb47ef0f61c4dba4cf2afe01c1c8dd793bb4c24230347c1ab909bb7dd"
     },
+    "clean-architecture": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.experimental/clean-architecture/SKILL.md",
+      "computedHash": "613e3421174049dfb4a528c072cafb5e805322a6d9e1522ec9b74077e07947d7"
+    },
+    "clean-code": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.experimental/clean-code/SKILL.md",
+      "computedHash": "3fb1135ebd301e9b6f0e15b7f34f35b91ec367d4d6216b8ff69df42b65c13380"
+    },
+    "code-simplifier": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.experimental/code-simplifier/SKILL.md",
+      "computedHash": "721c58cd2aa4f1a22f95de03cfe7114fa1dce426aa41108dcea2b83bd27faaf3"
+    },
     "core": {
       "source": "vercel-labs/json-render",
       "sourceType": "github",
       "skillPath": "skills/core/SKILL.md",
       "computedHash": "8cff0bce16c16090f2b822e7083f24416a45d3d69757475a041c5ee672ee2d6f"
+    },
+    "debug": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/debug/SKILL.md",
+      "computedHash": "f59c8403a6fc2f547e2cdd57b2cf9c58d5e37f1d5dd7cdf7bf67e1784a8215db"
+    },
+    "emilkowal-animations": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.experimental/emilkowal-animations/SKILL.md",
+      "computedHash": "5044cbfc49bba2122b1cef3dcb960b8e415867db90f097f9e9bcdb24df695d11"
+    },
+    "feature-arch": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/feature-arch/SKILL.md",
+      "computedHash": "8891e09eeaac4e2d233b5286be05eab86874a00af01d2ba98fe7e22949474077"
     },
     "frontend-design": {
       "source": "anthropics/skills",
@@ -25,11 +67,41 @@
       "skillPath": "skills/productivity/grill-me/SKILL.md",
       "computedHash": "784f0dbb7403b0f00324bce9a112f715342777a0daee7bbb7385f9c6f0a170ea"
     },
+    "msw": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/msw/SKILL.md",
+      "computedHash": "c432eaa96c11e729a6d305988c79bf944d6a741bc55e6a51ba5fae8d6031f976"
+    },
+    "nextjs": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/nextjs/SKILL.md",
+      "computedHash": "f1079a98e57086666eb29a11828c14733a3bc7295651cb4596ff7edcd88670ed"
+    },
+    "nuqs": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/nuqs/SKILL.md",
+      "computedHash": "573a1b8ab42c339b6efc8ab55e720faf75e4902071bdc2f65c006972accfd551"
+    },
+    "playwright": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/playwright/SKILL.md",
+      "computedHash": "ca5bb4882a7e52762f36220a0e96262198e0c8d48bedaad21a289bab9301d1f9"
+    },
     "react": {
       "source": "vercel-labs/json-render",
       "sourceType": "github",
       "skillPath": "skills/react/SKILL.md",
       "computedHash": "67d6daabd85c23cc58eeabea56f25b899723932dfb69c55ddae4990b43c918d2"
+    },
+    "react-hook-form": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/react-hook-form/SKILL.md",
+      "computedHash": "b7f82b6311d61233c17062792f6be4137cbd6284b56f8d7e60ef63c7b5836329"
     },
     "shadcn": {
       "source": "vercel-labs/json-render",
@@ -37,11 +109,71 @@
       "skillPath": "skills/shadcn/SKILL.md",
       "computedHash": "d6a9be8eeedea18343b5b15d6ac481a55436fe40db4b65d59858388072c239c4"
     },
+    "tailwind": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/tailwind/SKILL.md",
+      "computedHash": "cbeebfbf77537127a4a309fe3439cc00027d6e6e56f0aeea74ed5537a971ac8b"
+    },
+    "tailwind-refactor": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.experimental/tailwind-refactor/SKILL.md",
+      "computedHash": "f041281452a90fed2c2a5f455571bd660c94827c08e0c40b8beee3834c3d9fbc"
+    },
+    "tailwind-responsive-ui": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.experimental/tailwind-responsive-ui/SKILL.md",
+      "computedHash": "dcb45134574840921c1f34ce1fa4b3d6aa7cbf11c5d13ae8adefe7d37265add5"
+    },
+    "tailwind-ui-refactor": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.experimental/tailwind-ui-refactor/SKILL.md",
+      "computedHash": "bb7fbdb319e83bd48fd13c7dc8ee0a2e071f51cf21f5cb498d0a472148b4365f"
+    },
+    "tanstack-query": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/tanstack-query/SKILL.md",
+      "computedHash": "e7d35b4fa0a3f167de1f465a31e25d7087ee553ab894083716894d61ca1091f9"
+    },
+    "tdd": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/tdd/SKILL.md",
+      "computedHash": "09b4598d374af2e1872c4b59ac316859a58b5e8cf0aef6c5f41c1b31a818eb89"
+    },
+    "typescript": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/typescript/SKILL.md",
+      "computedHash": "3475c8e2a2e556833213dc2d4dff19e09ef166375a203b256b0d7f04f7d5d424"
+    },
+    "ui-design": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/ui-design/SKILL.md",
+      "computedHash": "69c14fd298c6420b7e65e908183d9b8e938164703e0989a944accbfb12abb1b6"
+    },
     "vercel-sandbox": {
       "source": "vercel/vercel-plugin",
       "sourceType": "github",
       "skillPath": "skills/vercel-sandbox/SKILL.md",
       "computedHash": "c177210aea54ebae282cd225fcda1896942fd0b9adf4e84e961ddd46bca58253"
+    },
+    "vitest": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/vitest/SKILL.md",
+      "computedHash": "84d2d291054736df0cdee47d1a9a8d3ceb5b9e5a06afb879edff51f55ef30816"
+    },
+    "zod": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/zod/SKILL.md",
+      "computedHash": "e5d8e35002d0d6b03db0b0daad54e1b82c9c10804f8a745025c07db5ea685655"
     }
   }
 }
