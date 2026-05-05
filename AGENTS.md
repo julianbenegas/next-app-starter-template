@@ -88,3 +88,22 @@ We use all tools available — unit tests, component tests, e2e tests, and type-
 This codebase prioritizes narrative readability over reuse-driven minimalism. JSX blocks may be extracted into private (ie. not exported), single-use "dumb" components when doing so clarifies the structure of a page or keeps the core logic easy to scan. Extraction is used as an editorial tool to surface the important parts of a component and push low-signal UI scaffolding out of the way. Reuse is not required. However, extracted components must remain simple: minimal props, no side effects, and no non-trivial logic. When a component accumulates real behavior or becomes reused, it should be promoted to a proper, exported component or refactored accordingly.
 
 Testing Focus: We care about testing important parts of the logic, not full coverage. Our goal with tests is confidence that things work. We use all tools available: unit tests, component tests, e2e tests (not yet set up), and type-level guarantees.
+
+## Design Guidelines
+
+When generating or refactoring visual assets and layouts, lean on these design rules. They translate directly into prompts and into Tailwind class choices.
+
+1. **Use an 8-point spacing scale.** Snap every margin, padding, and gap to a multiple of 8 (8, 16, 24, 32, 48, 64). Padding = space inside an element; margin = space between elements. They fix different problems.
+   - Prompt: _"Use an 8-point spacing scale throughout."_
+2. **Establish hierarchy between H1 and subhead.** If they look like siblings instead of parent and child, the hierarchy is broken.
+   - Prompt: _"Establish stronger hierarchy between the headline and subheadline."_
+3. **Constrain the measure to ~65 characters.** Edge-to-edge text makes the eye travel too far. Aim for 60–75 characters per line, fixed max-width around 600–700px.
+   - Prompt: _"Constrain the measure to ~65 characters."_
+4. **Set breakpoints at 375, 768, and 1024.** Mobile / tablet / desktop pivots.
+   - Prompt: _"Responsive at 375, 768, and 1024."_
+5. **Constrain anything that sprawls.** Apply to max-width, measure, container — anytime an element feels too big, constrain it rather than reflow everything else.
+6. **Use density instead of "less cluttered."** "Reduce density" = breathing room. "Increase density" = pack more in. Density is the precise term.
+7. **Ensure touch targets are at least 44px.** Apple's spec: 44 px minimum tappable area on mobile.
+   - Prompt: _"Ensure all touch targets are at least 44px."_
+
+Use the working vocabulary of the domain (measure, hierarchy, density, constrain, touch target) when prompting Claude Design or any visual generator — better prompts come from the words experts already use.
