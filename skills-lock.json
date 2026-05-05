@@ -13,6 +13,12 @@
       "skillPath": "skills/core/SKILL.md",
       "computedHash": "8cff0bce16c16090f2b822e7083f24416a45d3d69757475a041c5ee672ee2d6f"
     },
+    "grill-me": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/productivity/grill-me/SKILL.md",
+      "computedHash": "784f0dbb7403b0f00324bce9a112f715342777a0daee7bbb7385f9c6f0a170ea"
+    },
     "react": {
       "source": "vercel-labs/json-render",
       "sourceType": "github",
