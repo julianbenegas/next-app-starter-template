@@ -55,6 +55,12 @@
       "skillPath": "skills/.curated/debug/SKILL.md",
       "computedHash": "f59c8403a6fc2f547e2cdd57b2cf9c58d5e37f1d5dd7cdf7bf67e1784a8215db"
     },
+    "design-an-interface": {
+      "source": "evans-sam/skills",
+      "sourceType": "github",
+      "skillPath": "skills/design-an-interface/SKILL.md",
+      "computedHash": "27d9b18d1ce48a761037ec89bb39ceacd9236ce3209a679aef4bb8f04e6f316e"
+    },
     "doc-coauthoring": {
       "source": "anthropics/skills",
       "sourceType": "github",
@@ -157,6 +163,12 @@
       "skillPath": "skills/.curated/react-hook-form/SKILL.md",
       "computedHash": "b7f82b6311d61233c17062792f6be4137cbd6284b56f8d7e60ef63c7b5836329"
     },
+    "request-refactor-plan": {
+      "source": "evans-sam/skills",
+      "sourceType": "github",
+      "skillPath": "skills/request-refactor-plan/SKILL.md",
+      "computedHash": "b35f3b12305f05fd91c0c052b0913d2bc7ae1ab39b8a22d3910bf351afe92d6d"
+    },
     "shadcn": {
       "source": "vercel-labs/json-render",
       "sourceType": "github",
@@ -240,6 +252,12 @@
       "sourceType": "github",
       "skillPath": "skills/web-design-guidelines/SKILL.md",
       "computedHash": "f3bc47f890f42a44db1007ab390709ec368e4b8c089baee6b0007182236ac474"
+    },
+    "write-a-prd": {
+      "source": "evans-sam/skills",
+      "sourceType": "github",
+      "skillPath": "skills/write-a-prd/SKILL.md",
+      "computedHash": "873efa6c1bb734d16936f7cc1cbbe1326fc6c534558e8ebdfb8d73a031241ec7"
     },
     "xlsx": {
       "source": "anthropics/skills",
