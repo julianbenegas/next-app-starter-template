@@ -244,7 +244,7 @@
     "vercel-sandbox": {
       "source": "vercel/vercel-plugin",
       "sourceType": "github",
-      "skillPath": "skills/vercel-sandbox/SKILL.md",
+      "skillPath": "skills/vercel-sandbox/upstream/SKILL.md",
       "computedHash": "c177210aea54ebae282cd225fcda1896942fd0b9adf4e84e961ddd46bca58253"
     },
     "vitest": {
@@ -263,7 +263,7 @@
       "source": "vercel/workflow",
       "sourceType": "github",
       "skillPath": "skills/workflow/SKILL.md",
-      "computedHash": "aad7631016438066937811865ff2ab5e71195e81c6f3c8d564e8556291eea124"
+      "computedHash": "d870ac314303f0b28cfeb8533567ac18df24f6e4d6b874e9f5261b5fddc29210"
     },
     "write-a-prd": {
       "source": "evans-sam/skills",
