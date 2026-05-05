@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Home() {
@@ -8,14 +7,8 @@ export default function Home() {
         <CardHeader>
           <CardTitle>Project Title</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent>
           <p className="italic">Put stuff here...</p>
-          <Link
-            href="/blog"
-            className="inline-block rounded-md border px-3 py-2 text-sm font-medium hover:bg-zinc-100"
-          >
-            Visit the MDX blog
-          </Link>
         </CardContent>
       </Card>
     </div>
