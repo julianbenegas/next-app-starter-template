@@ -175,6 +175,12 @@
       "skillPath": "skills/shadcn/SKILL.md",
       "computedHash": "d6a9be8eeedea18343b5b15d6ac481a55436fe40db4b65d59858388072c239c4"
     },
+    "streamdown": {
+      "source": "vercel/streamdown",
+      "sourceType": "github",
+      "skillPath": "skills/streamdown/SKILL.md",
+      "computedHash": "c842552c75b80abb74ef8f92481d34684c709884dd2df22c2ab3b183aee582fe"
+    },
     "tailwind": {
       "source": "pproenca/dot-skills",
       "sourceType": "github",
@@ -252,6 +258,12 @@
       "sourceType": "github",
       "skillPath": "skills/web-design-guidelines/SKILL.md",
       "computedHash": "f3bc47f890f42a44db1007ab390709ec368e4b8c089baee6b0007182236ac474"
+    },
+    "workflow": {
+      "source": "vercel/workflow",
+      "sourceType": "github",
+      "skillPath": "skills/workflow/SKILL.md",
+      "computedHash": "aad7631016438066937811865ff2ab5e71195e81c6f3c8d564e8556291eea124"
     },
     "write-a-prd": {
       "source": "evans-sam/skills",
