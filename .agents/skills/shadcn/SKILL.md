@@ -1,143 +1,159 @@
 ---
 name: shadcn
-description: shadcn/ui component library best practices and patterns (formerly shadcn-ui). This skill should be used when writing, reviewing, or refactoring shadcn/ui components to ensure proper architecture, accessibility, and performance. Triggers on tasks involving Radix primitives, Tailwind styling, form validation with React Hook Form, data tables, theming, or component composition patterns.
+description: Pre-built shadcn/ui components for json-render. Use when working with @json-render/shadcn, adding standard UI components to a catalog, or building web UIs with Radix UI + Tailwind CSS components.
 ---
 
-# shadcn/ui Community Best Practices
+# @json-render/shadcn
 
-Comprehensive best practices guide for shadcn/ui applications, maintained by the shadcn/ui community. Contains 58 rules across 10 categories, prioritized by impact to guide automated refactoring and code generation.
+Pre-built shadcn/ui component definitions and implementations for json-render. Provides 36 components built on Radix UI + Tailwind CSS.
 
-## When to Apply
+## Two Entry Points
 
-Reference these guidelines when:
-- Installing and configuring shadcn/ui in a project
-- Writing new shadcn/ui components or composing primitives
-- Implementing forms with React Hook Form and Zod validation
-- Building data tables or handling large dataset displays
-- Customizing themes or adding dark mode support
-- Reviewing code for accessibility compliance
+| Entry Point | Exports | Use For |
+|-------------|---------|---------|
+| `@json-render/shadcn/catalog` | `shadcnComponentDefinitions` | Catalog schemas (no React dependency, safe for server) |
+| `@json-render/shadcn` | `shadcnComponents` | React implementations |
 
-## Rule Categories by Priority
+## Usage Pattern
 
-| Priority | Category | Impact | Prefix |
-|----------|----------|--------|--------|
-| 1 | CLI & Project Setup | CRITICAL | `setup-` |
-| 2 | Component Architecture | CRITICAL | `arch-` |
-| 3 | Accessibility Preservation | CRITICAL | `ally-` |
-| 4 | Styling & Theming | HIGH | `style-` |
-| 5 | Form Patterns | HIGH | `form-` |
-| 6 | Data Display | MEDIUM-HIGH | `data-` |
-| 7 | Layout & Navigation | MEDIUM | `layout-` |
-| 8 | Component Composition | MEDIUM | `comp-` |
-| 9 | Performance Optimization | MEDIUM | `perf-` |
-| 10 | State Management | LOW-MEDIUM | `state-` |
+Pick the components you need from the standard definitions. Do not spread all definitions -- explicitly select what your app uses:
 
-## Quick Reference
+```typescript
+import { defineCatalog } from "@json-render/core";
+import { schema } from "@json-render/react/schema";
+import { shadcnComponentDefinitions } from "@json-render/shadcn/catalog";
+import { defineRegistry } from "@json-render/react";
+import { shadcnComponents } from "@json-render/shadcn";
 
-### 1. CLI & Project Setup (CRITICAL)
+// Catalog: pick definitions
+const catalog = defineCatalog(schema, {
+  components: {
+    Card: shadcnComponentDefinitions.Card,
+    Stack: shadcnComponentDefinitions.Stack,
+    Heading: shadcnComponentDefinitions.Heading,
+    Button: shadcnComponentDefinitions.Button,
+    Input: shadcnComponentDefinitions.Input,
+  },
+  actions: {},
+});
 
-- [`setup-components-json`](references/setup-components-json.md) - Configure components.json before adding components
-- [`setup-path-aliases`](references/setup-path-aliases.md) - Configure TypeScript path aliases to match components.json
-- [`setup-cn-utility`](references/setup-cn-utility.md) - Create the cn utility before using components
-- [`setup-use-cli-not-copy`](references/setup-use-cli-not-copy.md) - Use CLI to add components instead of copy-paste
-- [`setup-css-variables-theme`](references/setup-css-variables-theme.md) - Enable CSS variables for consistent theming
-- [`setup-rsc-configuration`](references/setup-rsc-configuration.md) - Set RSC flag based on framework support
+// Registry: pick matching implementations
+const { registry } = defineRegistry(catalog, {
+  components: {
+    Card: shadcnComponents.Card,
+    Stack: shadcnComponents.Stack,
+    Heading: shadcnComponents.Heading,
+    Button: shadcnComponents.Button,
+    Input: shadcnComponents.Input,
+  },
+});
+```
 
-### 2. Component Architecture (CRITICAL)
+> State actions (`setState`, `pushState`, `removeState`) are built into the React schema and handled by `ActionProvider` automatically. No need to declare them.
 
-- [`arch-use-asChild-for-custom-triggers`](references/arch-use-asChild-for-custom-triggers.md) - Use asChild prop for custom trigger elements
-- [`arch-preserve-radix-primitive-structure`](references/arch-preserve-radix-primitive-structure.md) - Maintain Radix compound component hierarchy
-- [`arch-extend-variants-with-cva`](references/arch-extend-variants-with-cva.md) - Use Class Variance Authority for type-safe variants
-- [`arch-use-cn-for-class-merging`](references/arch-use-cn-for-class-merging.md) - Use cn() utility for safe Tailwind class merging
-- [`arch-forward-refs-for-composable-components`](references/arch-forward-refs-for-composable-components.md) - Forward refs for form and focus integration
-- [`arch-isolate-component-variants`](references/arch-isolate-component-variants.md) - Separate base styles from variant-specific styles
+## Extending with Custom Components
 
-### 3. Accessibility Preservation (CRITICAL)
+Add custom components alongside standard ones:
 
-- [`ally-preserve-aria-attributes`](references/ally-preserve-aria-attributes.md) - Keep Radix ARIA attributes intact
-- [`ally-provide-sr-only-labels`](references/ally-provide-sr-only-labels.md) - Add screen reader labels for icon buttons
-- [`ally-maintain-focus-management`](references/ally-maintain-focus-management.md) - Preserve focus trapping in modals
-- [`ally-preserve-keyboard-navigation`](references/ally-preserve-keyboard-navigation.md) - Keep WAI-ARIA keyboard patterns
-- [`ally-ensure-color-contrast`](references/ally-ensure-color-contrast.md) - Maintain WCAG color contrast ratios
-- [`ally-dialog-title-required`](references/ally-dialog-title-required.md) - Always include DialogTitle for screen readers
-- [`ally-form-field-labels`](references/ally-form-field-labels.md) - Associate labels with form controls
-- [`ally-aria-invalid-errors`](references/ally-aria-invalid-errors.md) - Use aria-invalid for form error states
-- [`ally-checkbox-label-association`](references/ally-checkbox-label-association.md) - Wrap Checkbox with Label for click target
-- [`ally-focus-visible-styles`](references/ally-focus-visible-styles.md) - Preserve focus visible styles for keyboard navigation
+```typescript
+const catalog = defineCatalog(schema, {
+  components: {
+    // Standard
+    Card: shadcnComponentDefinitions.Card,
+    Stack: shadcnComponentDefinitions.Stack,
 
-### 4. Styling & Theming (HIGH)
+    // Custom
+    Metric: {
+      props: z.object({
+        label: z.string(),
+        value: z.string(),
+        trend: z.enum(["up", "down", "neutral"]).nullable(),
+      }),
+      description: "KPI metric display",
+    },
+  },
+  actions: {},
+});
 
-- [`style-use-css-variables-for-theming`](references/style-use-css-variables-for-theming.md) - Use CSS variables for theme colors
-- [`style-avoid-important-overrides`](references/style-avoid-important-overrides.md) - Never use !important for style overrides
-- [`style-use-tailwind-theme-extend`](references/style-use-tailwind-theme-extend.md) - Extend Tailwind theme for design tokens
-- [`style-consistent-spacing-scale`](references/style-consistent-spacing-scale.md) - Use consistent Tailwind spacing scale
-- [`style-responsive-design-patterns`](references/style-responsive-design-patterns.md) - Apply mobile-first responsive design
-- [`style-dark-mode-support`](references/style-dark-mode-support.md) - Support dark mode with CSS variables
+const { registry } = defineRegistry(catalog, {
+  components: {
+    Card: shadcnComponents.Card,
+    Stack: shadcnComponents.Stack,
+    Metric: ({ props }) => <div>{props.label}: {props.value}</div>,
+  },
+});
+```
 
-### 5. Form Patterns (HIGH)
+## Available Components
 
-- [`form-use-react-hook-form-integration`](references/form-use-react-hook-form-integration.md) - Integrate with React Hook Form
-- [`form-use-zod-for-schema-validation`](references/form-use-zod-for-schema-validation.md) - Use Zod for type-safe validation
-- [`form-show-validation-errors-correctly`](references/form-show-validation-errors-correctly.md) - Show errors at appropriate times
-- [`form-handle-async-validation`](references/form-handle-async-validation.md) - Debounce async validation calls
-- [`form-reset-form-state-correctly`](references/form-reset-form-state-correctly.md) - Reset form state after submission
+### Layout
+- **Card** - Container with optional title, description, maxWidth, centered
+- **Stack** - Flex container with direction, gap, align, justify
+- **Grid** - Grid layout with columns (number) and gap
+- **Separator** - Visual divider with orientation
 
-### 6. Data Display (MEDIUM-HIGH)
+### Navigation
+- **Tabs** - Tabbed navigation with tabs array, defaultValue, value
+- **Accordion** - Collapsible sections with items array and type (single/multiple)
+- **Collapsible** - Single collapsible section with title
+- **Pagination** - Page navigation with totalPages and page
 
-- [`data-use-tanstack-table-for-complex-tables`](references/data-use-tanstack-table-for-complex-tables.md) - Use TanStack Table for sorting/filtering
-- [`data-virtualize-large-lists`](references/data-virtualize-large-lists.md) - Virtualize lists with 100+ items
-- [`data-use-skeleton-loading-states`](references/data-use-skeleton-loading-states.md) - Use Skeleton for loading states
-- [`data-paginate-server-side`](references/data-paginate-server-side.md) - Paginate large datasets server-side
-- [`data-empty-states-with-guidance`](references/data-empty-states-with-guidance.md) - Provide actionable empty states
+### Overlay
+- **Dialog** - Modal dialog with title, description, openPath
+- **Drawer** - Bottom drawer with title, description, openPath
+- **Tooltip** - Hover tooltip with content and text
+- **Popover** - Click-triggered popover with trigger and content
+- **DropdownMenu** - Dropdown with label and items array
 
-### 7. Layout & Navigation (MEDIUM)
+### Content
+- **Heading** - Heading text with level (h1-h4)
+- **Text** - Paragraph with variant (body, caption, muted, lead, code)
+- **Image** - Image with alt, width, height
+- **Avatar** - User avatar with src, name, size
+- **Badge** - Status badge with text and variant (default, secondary, destructive, outline)
+- **Alert** - Alert banner with title, message, type (success, warning, info, error)
+- **Carousel** - Scrollable carousel with items array
+- **Table** - Data table with columns (string[]) and rows (string[][])
 
-- [`layout-sidebar-provider`](references/layout-sidebar-provider.md) - Wrap layout with SidebarProvider
-- [`layout-sidebar-collapsible`](references/layout-sidebar-collapsible.md) - Configure sidebar collapsible behavior
-- [`layout-sidebar-groups`](references/layout-sidebar-groups.md) - Organize sidebar navigation with groups
-- [`layout-sheet-mobile-nav`](references/layout-sheet-mobile-nav.md) - Use Sheet for mobile navigation overlay
-- [`layout-breadcrumb-navigation`](references/layout-breadcrumb-navigation.md) - Implement breadcrumbs for deep navigation
+### Feedback
+- **Progress** - Progress bar with value, max, label
+- **Skeleton** - Loading placeholder with width, height, rounded
+- **Spinner** - Loading spinner with size and label
 
-### 8. Component Composition (MEDIUM)
+### Input
+- **Button** - Button with label, variant (primary, secondary, danger), disabled
+- **Link** - Anchor link with label and href
+- **Input** - Text input with label, name, type, placeholder, value, checks
+- **Textarea** - Multi-line input with label, name, placeholder, rows, value, checks
+- **Select** - Dropdown select with label, name, options (string[]), value, checks
+- **Checkbox** - Checkbox with label, name, checked, checks, validateOn
+- **Radio** - Radio group with label, name, options (string[]), value, checks, validateOn
+- **Switch** - Toggle switch with label, name, checked, checks, validateOn
+- **Slider** - Range slider with label, min, max, step, value
+- **Toggle** - Toggle button with label, pressed, variant
+- **ToggleGroup** - Group of toggles with items, type, value
+- **ButtonGroup** - Button group with buttons array and selected
 
-- [`comp-compose-with-compound-components`](references/comp-compose-with-compound-components.md) - Use compound component patterns
-- [`comp-use-drawer-for-mobile-modals`](references/comp-use-drawer-for-mobile-modals.md) - Use Drawer on mobile devices
-- [`comp-combine-command-with-popover`](references/comp-combine-command-with-popover.md) - Create searchable selects with Command
-- [`comp-nest-dialogs-correctly`](references/comp-nest-dialogs-correctly.md) - Manage nested dialog focus correctly
-- [`comp-create-reusable-form-fields`](references/comp-create-reusable-form-fields.md) - Extract reusable form field components
-- [`comp-use-slot-pattern-for-flexibility`](references/comp-use-slot-pattern-for-flexibility.md) - Use slot pattern for flexible content
+## Built-in Actions (from `@json-render/react`)
 
-### 9. Performance Optimization (MEDIUM)
+These are built into the React schema and handled by `ActionProvider` automatically. They appear in prompts without needing to be declared in the catalog.
 
-- [`perf-lazy-load-heavy-components`](references/perf-lazy-load-heavy-components.md) - Lazy load components over 50KB
-- [`perf-memoize-expensive-renders`](references/perf-memoize-expensive-renders.md) - Memoize list items and expensive components
-- [`perf-optimize-icon-imports`](references/perf-optimize-icon-imports.md) - Use direct imports for Lucide icons
-- [`perf-avoid-unnecessary-rerenders-in-forms`](references/perf-avoid-unnecessary-rerenders-in-forms.md) - Isolate form field watching
-- [`perf-debounce-search-inputs`](references/perf-debounce-search-inputs.md) - Debounce search and filter inputs
+- **setState** - Set a value at a state path (`{ statePath, value }`)
+- **pushState** - Push a value onto an array (`{ statePath, value, clearStatePath? }`)
+- **removeState** - Remove an array item by index (`{ statePath, index }`)
+- **validateForm** - Validate all fields, write `{ valid, errors }` to state (`{ statePath? }`)
 
-### 10. State Management (LOW-MEDIUM)
+## Validation Timing (`validateOn`)
 
-- [`state-prefer-uncontrolled-for-simple-inputs`](references/state-prefer-uncontrolled-for-simple-inputs.md) - Use uncontrolled for simple forms
-- [`state-lift-state-to-appropriate-level`](references/state-lift-state-to-appropriate-level.md) - Lift state to lowest common ancestor
-- [`state-use-controlled-dialog-state`](references/state-use-controlled-dialog-state.md) - Control dialogs for programmatic access
-- [`state-colocate-state-with-components`](references/state-colocate-state-with-components.md) - Keep state close to where it's used
+All form components support `validateOn` to control when validation runs:
+- `"change"` — validate on every input change (default for Select, Checkbox, Radio, Switch)
+- `"blur"` — validate when field loses focus (default for Input, Textarea)
+- `"submit"` — validate only on form submission
 
-## How to Use
+## Important Notes
 
-Read individual reference files for detailed explanations and code examples:
-
-- [Section definitions](references/_sections.md) - Category structure and impact levels
-- [Rule template](assets/templates/_template.md) - Template for adding new rules
-
-## Full Compiled Document
-
-For a single-file reference containing all rules, see [AGENTS.md](AGENTS.md).
-
-## Reference Files
-
-| File | Description |
-|------|-------------|
-| [AGENTS.md](AGENTS.md) | Complete compiled guide with all rules |
-| [references/_sections.md](references/_sections.md) | Category definitions and ordering |
-| [assets/templates/_template.md](assets/templates/_template.md) | Template for new rules |
-| [metadata.json](metadata.json) | Version and reference information |
+- The `/catalog` entry point has no React dependency -- use it for server-side prompt generation
+- Components use Tailwind CSS classes -- your app must have Tailwind configured
+- Component implementations use bundled shadcn/ui primitives (not your app's `components/ui/`)
+- All form inputs support `checks` for validation (type + message pairs) and `validateOn` for timing
+- Events: inputs emit `change`/`submit`/`focus`/`blur`; buttons emit `press`; selects emit `change`/`select`

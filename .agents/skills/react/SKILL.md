@@ -1,112 +1,264 @@
 ---
 name: react
-description: React 19 performance optimization guidelines for concurrent rendering, Server Components, actions, hooks, and memoization (formerly react-19). This skill should be used when writing React 19 components, using concurrent features, or optimizing re-renders. This skill does NOT cover Next.js-specific features like App Router, next.config.js, or Next.js caching (use nextjs-16-app-router skill). For client-side form validation with React Hook Form, use react-hook-form skill.
+description: React renderer for json-render that turns JSON specs into React components. Use when working with @json-render/react, building React UIs from JSON, creating component catalogs, or rendering AI-generated specs.
 ---
 
-# React 19 Best Practices
+# @json-render/react
 
-Comprehensive performance optimization guide for React 19/19.2 applications. Contains 41 rules across 8 categories, prioritized by impact from critical (concurrent rendering, server components) to incremental (component patterns).
+React renderer that converts JSON specs into React component trees.
 
-## When to Apply
+## Quick Start
 
-- Writing new React components or refactoring existing ones
-- Optimizing re-render performance or bundle size
-- Using concurrent features (useTransition, useDeferredValue, Activity)
-- Setting up Server Components or server/client boundaries
-- Implementing form actions, optimistic updates, or data fetching
-- Configuring React Compiler for automatic memoization
-- Reviewing React code for common anti-patterns
+```typescript
+import { defineRegistry, Renderer } from "@json-render/react";
+import { catalog } from "./catalog";
 
-## Rule Categories
+const { registry } = defineRegistry(catalog, {
+  components: {
+    Card: ({ props, children }) => <div>{props.title}{children}</div>,
+  },
+});
 
-| Category | Impact | Rules | Key Topics |
-|----------|--------|-------|------------|
-| Concurrent Rendering | CRITICAL | 6 | useTransition, useDeferredValue, Activity, batching |
-| Server Components | CRITICAL | 6 | RSC boundaries, data fetching, streaming |
-| Actions & Forms | HIGH | 5 | Form actions, useActionState, useOptimistic |
-| Data Fetching | HIGH | 5 | use() hook, cache(), Suspense, error boundaries |
-| State Management | MEDIUM-HIGH | 5 | Derived values, context optimization, useReducer |
-| Memoization & Performance | MEDIUM | 5 | React Compiler, useMemo, useCallback, React.memo |
-| Effects & Events | MEDIUM | 5 | useEffectEvent, cleanup, external stores |
-| Component Patterns | LOW-MEDIUM | 4 | Composition, controlled vs uncontrolled, key reset |
+function App({ spec }) {
+  return <Renderer spec={spec} registry={registry} />;
+}
+```
 
-## Quick Reference
+## Creating a Catalog
 
-**Critical patterns** — get these right first:
-- Fetch data in Server Components, not Client Components
-- Push `'use client'` boundaries as low as possible
-- Use `startTransition` for expensive non-blocking updates
-- Use `<Activity>` to preserve state across tab/page switches
+```typescript
+import { defineCatalog } from "@json-render/core";
+import { schema } from "@json-render/react/schema";
+import { defineRegistry } from "@json-render/react";
+import { z } from "zod";
 
-**Common mistakes** — avoid these anti-patterns:
-- Creating promises inside Client Components for `use()` (causes infinite loops)
-- Memoizing everything (use React Compiler v1.0+ instead)
-- Using effects for derived state or user event handling
-- Placing `'use client'` too high in the component tree
+// Create catalog with props schemas
+export const catalog = defineCatalog(schema, {
+  components: {
+    Button: {
+      props: z.object({
+        label: z.string(),
+        variant: z.enum(["primary", "secondary"]).nullable(),
+      }),
+      description: "Clickable button",
+    },
+    Card: {
+      props: z.object({ title: z.string() }),
+      description: "Card container with title",
+    },
+  },
+});
 
-## Table of Contents
+// Define component implementations with type-safe props
+const { registry } = defineRegistry(catalog, {
+  components: {
+    Button: ({ props }) => (
+      <button className={props.variant}>{props.label}</button>
+    ),
+    Card: ({ props, children }) => (
+      <div className="card">
+        <h2>{props.title}</h2>
+        {children}
+      </div>
+    ),
+  },
+});
+```
 
-1. [Concurrent Rendering](references/_sections.md#1-concurrent-rendering) — **CRITICAL**
-   - 1.1 [Use Activity for Pre-Rendering and State Preservation](references/conc-activity-component.md) — HIGH (eliminates navigation re-render cost, preserves user input state)
-   - 1.2 [Avoid Suspense Fallback Thrashing](references/conc-suspense-fallback.md) — HIGH (prevents 200-500ms layout shift flicker)
-   - 1.3 [Leverage Automatic Batching for Fewer Renders](references/conc-automatic-batching.md) — HIGH (batches multiple setState calls into a single render in all contexts)
-   - 1.4 [Use useDeferredValue for Derived Expensive Values](references/conc-use-deferred-value.md) — CRITICAL (prevents jank in derived computations)
-   - 1.5 [Use useTransition for Non-Blocking Updates](references/conc-use-transition.md) — CRITICAL (maintains <50ms input latency during heavy state updates)
-   - 1.6 [Write Concurrent-Safe Components](references/conc-concurrent-safe.md) — MEDIUM-HIGH (prevents bugs in concurrent rendering)
-2. [Server Components](references/_sections.md#2-server-components) — **CRITICAL**
-   - 2.1 [Avoid Client-Only Libraries in Server Components](references/rsc-avoid-client-only-libs.md) — MEDIUM-HIGH (prevents build errors, correct component placement)
-   - 2.2 [Enable Streaming with Nested Suspense](references/rsc-streaming.md) — MEDIUM-HIGH (progressive loading, faster TTFB)
-   - 2.3 [Fetch Data in Server Components](references/rsc-data-fetching-server.md) — CRITICAL (significantly reduces client JS bundle, eliminates client-side data waterfalls)
-   - 2.4 [Minimize Server/Client Boundary Crossings](references/rsc-server-client-boundary.md) — CRITICAL (reduces serialization overhead, smaller bundles)
-   - 2.5 [Pass Only Serializable Props to Client Components](references/rsc-serializable-props.md) — HIGH (prevents runtime errors, ensures correct hydration)
-   - 2.6 [Use Composition to Mix Server and Client Components](references/rsc-composition-pattern.md) — HIGH (maintains server rendering for static content)
-3. [Actions & Forms](references/_sections.md#3-actions-&-forms) — **HIGH**
-   - 3.1 [Use Form Actions Instead of onSubmit](references/form-actions.md) — HIGH (forms work without JS loaded, eliminates e.preventDefault() boilerplate)
-   - 3.2 [Use useActionState for Form State Management](references/form-use-action-state.md) — HIGH (declarative form handling, automatic pending states)
-   - 3.3 [Use useFormStatus for Submit Button State](references/form-use-form-status.md) — MEDIUM-HIGH (proper loading indicators, prevents double submission)
-   - 3.4 [Use useOptimistic for Instant UI Feedback](references/form-use-optimistic.md) — HIGH (0ms perceived latency for mutations, automatic rollback on server failure)
-   - 3.5 [Validate Forms on Server with Actions](references/form-validation.md) — MEDIUM (prevents client-only validation bypass, single source of truth for form errors)
-4. [Data Fetching](references/_sections.md#4-data-fetching) — **HIGH**
-   - 4.1 [Fetch Data in Parallel with Promise.all](references/data-parallel-fetching.md) — MEDIUM-HIGH (eliminates waterfalls, 2-5x faster)
-   - 4.2 [Use cache() for Request Deduplication](references/data-cache-deduplication.md) — HIGH (eliminates duplicate fetches per server request)
-   - 4.3 [Use Error Boundaries with Suspense](references/data-error-boundaries.md) — MEDIUM (isolates failures to individual components, prevents full-page crashes)
-   - 4.4 [Use Suspense for Declarative Loading States](references/data-suspense-data-fetching.md) — HIGH (eliminates loading state boilerplate, enables parallel data fetch coordination)
-   - 4.5 [Use the use() Hook for Promises in Render](references/data-use-hook.md) — HIGH (eliminates useEffect+useState fetch pattern, integrates with Suspense boundaries)
-5. [State Management](references/_sections.md#5-state-management) — **MEDIUM-HIGH**
-   - 5.1 [Calculate Derived Values During Render](references/rstate-derived-values.md) — MEDIUM (eliminates sync bugs, simpler code)
-   - 5.2 [Split Context to Prevent Unnecessary Re-renders](references/rstate-context-optimization.md) — MEDIUM (reduces re-renders from context changes)
-   - 5.3 [Use Functional State Updates for Derived Values](references/rstate-functional-updates.md) — MEDIUM-HIGH (prevents stale closures, stable callbacks)
-   - 5.4 [Use Lazy Initialization for Expensive Initial State](references/rstate-lazy-initialization.md) — MEDIUM-HIGH (prevents expensive computation on every render)
-   - 5.5 [Use useReducer for Complex State Logic](references/rstate-use-reducer.md) — MEDIUM (eliminates impossible state combinations, enables unit-testable state logic)
-6. [Memoization & Performance](references/_sections.md#6-memoization-&-performance) — **MEDIUM**
-   - 6.1 [Avoid Premature Memoization](references/memo-avoid-premature.md) — MEDIUM (removes 0.1-0.5ms per-render overhead from unnecessary memoization)
-   - 6.2 [Leverage React Compiler for Automatic Memoization](references/memo-compiler.md) — MEDIUM (automatic optimization, less manual code)
-   - 6.3 [Use React.memo for Expensive Pure Components](references/memo-react-memo.md) — MEDIUM (skips expensive re-renders, 5-50ms savings per unchanged component)
-   - 6.4 [Use useCallback for Stable Function References](references/memo-use-callback.md) — MEDIUM (prevents child re-renders from reference changes)
-   - 6.5 [Use useMemo for Expensive Calculations](references/memo-use-memo.md) — MEDIUM (skips O(n) recalculations on re-renders with unchanged dependencies)
-7. [Effects & Events](references/_sections.md#7-effects-&-events) — **MEDIUM**
-   - 7.1 [Always Clean Up Effect Side Effects](references/effect-cleanup.md) — MEDIUM (prevents memory leaks, stale callbacks)
-   - 7.2 [Avoid Effects for Derived State and User Events](references/effect-avoid-unnecessary.md) — MEDIUM (eliminates sync bugs, simpler code)
-   - 7.3 [Avoid Object and Array Dependencies in Effects](references/effect-object-dependencies.md) — MEDIUM (prevents infinite loops, unnecessary re-runs)
-   - 7.4 [Use useEffectEvent for Non-Reactive Logic](references/effect-use-effect-event.md) — MEDIUM (prevents unnecessary effect re-runs from non-reactive value changes)
-   - 7.5 [Use useSyncExternalStore for External Subscriptions](references/effect-use-sync-external-store.md) — MEDIUM (prevents tearing in concurrent rendering, ensures SSR-safe external state)
-8. [Component Patterns](references/_sections.md#8-component-patterns) — **LOW-MEDIUM**
-   - 8.1 [Choose Controlled vs Uncontrolled Appropriately](references/rcomp-controlled-components.md) — LOW-MEDIUM (prevents form state sync bugs, enables real-time validation)
-   - 8.2 [Prefer Composition Over Props Explosion](references/rcomp-composition.md) — LOW-MEDIUM (reduces prop drilling depth, enables independent component reuse)
-   - 8.3 [Use Key to Reset Component State](references/rcomp-key-reset.md) — LOW-MEDIUM (forces full component remount, eliminates stale state after identity changes)
-   - 8.4 [Use Render Props for Inversion of Control](references/rcomp-render-props.md) — LOW-MEDIUM (enables parent-controlled rendering without child prop explosion)
+## Spec Structure (Element Tree)
 
-## References
+The React schema uses an element tree format:
 
-1. [https://react.dev](https://react.dev)
-2. [https://react.dev/blog/2024/12/05/react-19](https://react.dev/blog/2024/12/05/react-19)
-3. [https://react.dev/blog/2025/10/01/react-19-2](https://react.dev/blog/2025/10/01/react-19-2)
-4. [https://react.dev/blog/2025/10/07/react-compiler-1](https://react.dev/blog/2025/10/07/react-compiler-1)
-5. [https://react.dev/learn/you-might-not-need-an-effect](https://react.dev/learn/you-might-not-need-an-effect)
-6. [https://github.com/facebook/react](https://github.com/facebook/react)
+```json
+{
+  "root": {
+    "type": "Card",
+    "props": { "title": "Hello" },
+    "children": [
+      { "type": "Button", "props": { "label": "Click me" } }
+    ]
+  }
+}
+```
 
-## Related Skills
+## Visibility Conditions
 
-- For Next.js 16 App Router, see `nextjs-16-app-router` skill
-- For client-side form handling, see `react-hook-form` skill
-- For data caching with TanStack Query, see `tanstack-query` skill
+Use `visible` on elements to show/hide based on state. New syntax: `{ "$state": "/path" }`, `{ "$state": "/path", "eq": value }`, `{ "$state": "/path", "not": true }`, `{ "$and": [cond1, cond2] }` for AND, `{ "$or": [cond1, cond2] }` for OR. Helpers: `visibility.when("/path")`, `visibility.unless("/path")`, `visibility.eq("/path", val)`, `visibility.and(cond1, cond2)`, `visibility.or(cond1, cond2)`.
+
+## Providers
+
+| Provider | Purpose |
+|----------|---------|
+| `StateProvider` | Share state across components (JSON Pointer paths). Accepts optional `store` prop for controlled mode. |
+| `ActionProvider` | Handle actions dispatched via the event system |
+| `VisibilityProvider` | Enable conditional rendering based on state |
+| `ValidationProvider` | Form field validation |
+
+### External Store (Controlled Mode)
+
+Pass a `StateStore` to `StateProvider` (or `JSONUIProvider` / `createRenderer`) to use external state management (Redux, Zustand, XState, etc.):
+
+```tsx
+import { createStateStore, type StateStore } from "@json-render/react";
+
+const store = createStateStore({ count: 0 });
+
+<StateProvider store={store}>{children}</StateProvider>
+
+// Mutate from anywhere — React re-renders automatically:
+store.set("/count", 1);
+```
+
+When `store` is provided, `initialState` and `onStateChange` are ignored.
+
+## Dynamic Prop Expressions
+
+Any prop value can be a data-driven expression resolved by the renderer before components receive props:
+
+- **`{ "$state": "/state/key" }`** - reads from state model (one-way read)
+- **`{ "$bindState": "/path" }`** - two-way binding: reads from state and enables write-back. Use on the natural value prop (value, checked, pressed, etc.) of form components.
+- **`{ "$bindItem": "field" }`** - two-way binding to a repeat item field. Use inside repeat scopes.
+- **`{ "$cond": <condition>, "$then": <value>, "$else": <value> }`** - conditional value
+- **`{ "$template": "Hello, ${/name}!" }`** - interpolates state values into strings
+- **`{ "$computed": "fn", "args": { ... } }`** - calls registered functions with resolved args
+
+```json
+{
+  "type": "Input",
+  "props": {
+    "value": { "$bindState": "/form/email" },
+    "placeholder": "Email"
+  }
+}
+```
+
+Components do not use a `statePath` prop for two-way binding. Use `{ "$bindState": "/path" }` on the natural value prop instead.
+
+Components receive already-resolved props. For two-way bound props, use the `useBoundProp` hook with the `bindings` map the renderer provides.
+
+Register `$computed` functions via the `functions` prop on `JSONUIProvider` or `createRenderer`:
+
+```tsx
+<JSONUIProvider
+  functions={{ fullName: (args) => `${args.first} ${args.last}` }}
+>
+```
+
+## Event System
+
+Components use `emit` to fire named events, or `on()` to get an event handle with metadata. The element's `on` field maps events to action bindings:
+
+```tsx
+// Simple event firing
+Button: ({ props, emit }) => (
+  <button onClick={() => emit("press")}>{props.label}</button>
+),
+
+// Event handle with metadata (e.g. preventDefault)
+Link: ({ props, on }) => {
+  const click = on("click");
+  return (
+    <a href={props.href} onClick={(e) => {
+      if (click.shouldPreventDefault) e.preventDefault();
+      click.emit();
+    }}>{props.label}</a>
+  );
+},
+```
+
+```json
+{
+  "type": "Button",
+  "props": { "label": "Submit" },
+  "on": { "press": { "action": "submit" } }
+}
+```
+
+The `EventHandle` returned by `on()` has: `emit()`, `shouldPreventDefault` (boolean), and `bound` (boolean).
+
+## State Watchers
+
+Elements can declare a `watch` field (top-level, sibling of type/props/children) to trigger actions when state values change:
+
+```json
+{
+  "type": "Select",
+  "props": { "value": { "$bindState": "/form/country" }, "options": ["US", "Canada"] },
+  "watch": { "/form/country": { "action": "loadCities" } },
+  "children": []
+}
+```
+
+## Built-in Actions
+
+The `setState`, `pushState`, `removeState`, and `validateForm` actions are built into the React schema and handled automatically by `ActionProvider`. They are injected into AI prompts without needing to be declared in catalog `actions`:
+
+```json
+{ "action": "setState", "params": { "statePath": "/activeTab", "value": "home" } }
+{ "action": "pushState", "params": { "statePath": "/items", "value": { "text": "New" } } }
+{ "action": "removeState", "params": { "statePath": "/items", "index": 0 } }
+{ "action": "validateForm", "params": { "statePath": "/formResult" } }
+```
+
+`validateForm` validates all registered fields and writes `{ valid, errors }` to state.
+
+Note: `statePath` in action params (e.g. `setState.statePath`) targets the mutation path. Two-way binding in component props uses `{ "$bindState": "/path" }` on the value prop, not `statePath`.
+
+## useBoundProp
+
+For form components that need two-way binding, use `useBoundProp` with the `bindings` map the renderer provides when a prop uses `{ "$bindState": "/path" }` or `{ "$bindItem": "field" }`:
+
+```tsx
+import { useBoundProp } from "@json-render/react";
+
+Input: ({ element, bindings }) => {
+  const [value, setValue] = useBoundProp<string>(
+    element.props.value,
+    bindings?.value
+  );
+  return (
+    <input
+      value={value ?? ""}
+      onChange={(e) => setValue(e.target.value)}
+    />
+  );
+},
+```
+
+`useBoundProp(propValue, bindingPath)` returns `[value, setValue]`. The `value` is the resolved prop; `setValue` writes back to the bound state path (no-op if not bound).
+
+## BaseComponentProps
+
+For building reusable component libraries not tied to a specific catalog (e.g. `@json-render/shadcn`):
+
+```typescript
+import type { BaseComponentProps } from "@json-render/react";
+
+const Card = ({ props, children }: BaseComponentProps<{ title?: string }>) => (
+  <div>{props.title}{children}</div>
+);
+```
+
+## defineRegistry
+
+`defineRegistry` conditionally requires the `actions` field only when the catalog declares actions. Catalogs with `actions: {}` can omit it.
+
+## Key Exports
+
+| Export | Purpose |
+|--------|---------|
+| `defineRegistry` | Create a type-safe component registry from a catalog |
+| `Renderer` | Render a spec using a registry |
+| `schema` | Element tree schema (includes built-in state actions: setState, pushState, removeState, validateForm) |
+| `useStateStore` | Access state context |
+| `useStateValue` | Get single value from state |
+| `useBoundProp` | Two-way binding for `$bindState`/`$bindItem` expressions |
+| `useActions` | Access actions context |
+| `useAction` | Get a single action dispatch function |
+| `useOptionalValidation` | Non-throwing variant of useValidation (returns null if no provider) |
+| `useUIStream` | Stream specs from an API endpoint |
+| `createStateStore` | Create a framework-agnostic in-memory `StateStore` |
+| `StateStore` | Interface for plugging in external state management |
+| `BaseComponentProps` | Catalog-agnostic base type for reusable component libraries |
+| `EventHandle` | Event handle type (`emit`, `shouldPreventDefault`, `bound`) |
+| `ComponentContext` | Typed component context (catalog-aware) |
